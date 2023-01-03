@@ -6,6 +6,10 @@ export const HomeContainer = styled('main', {
   maxWidth: 'calc(100vw - ((100vw - 1180px) / 2))',
   marginLeft: 'auto',
   maxHeight: 656,
+
+  '@media screen and (max-width: calc(100vw - ((100vw - 1180px) / 2)))': {
+    paddingInline: '2rem',
+  },
 })
 
 export const ProductContainer = styled('div', {
@@ -52,6 +56,12 @@ export const ProductContainer = styled('div', {
       color: '$gray100',
     },
 
+    '> div': {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '0.25rem',
+    },
+
     span: {
       fontSize: '$xl',
       fontWeight: 'bold',
@@ -64,5 +74,18 @@ export const ProductContainer = styled('div', {
       opacity: 1,
       transform: 'translateY(0%)',
     },
+  },
+})
+
+export const AddToCartButton = styled('button', {
+  border: 'none',
+  borderRadius: 6,
+  background: '$green500',
+  padding: '0.75rem',
+  cursor: 'pointer',
+  transition: 'all .2s',
+
+  '&:hover': {
+    background: '$green300',
   },
 })

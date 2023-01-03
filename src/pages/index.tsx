@@ -1,4 +1,8 @@
-import { HomeContainer, ProductContainer } from '../styles/pages/home'
+import {
+  AddToCartButton,
+  HomeContainer,
+  ProductContainer,
+} from '../styles/pages/home'
 import Image from 'next/image'
 import { useKeenSlider } from 'keen-slider/react'
 import { stripe } from '../lib/stripe'
@@ -9,6 +13,7 @@ import { formatMoney } from '../utils/money'
 
 import 'keen-slider/keen-slider.min.css'
 import Head from 'next/head'
+import { Handbag } from 'phosphor-react'
 
 interface Product {
   id: string
@@ -50,8 +55,13 @@ export default function Home({ products }: Props) {
             <ProductContainer className="keen-slider__slide">
               <Image src={p.imageUrl} width={520} height={480} alt={p.name} />
               <footer>
-                <strong>{p.name}</strong>
-                <span>{p.formattedPrice}</span>
+                <div>
+                  <strong>{p.name}</strong>
+                  <span>{p.formattedPrice}</span>
+                </div>
+                <AddToCartButton>
+                  <Handbag size={32} color="white" weight="bold" />
+                </AddToCartButton>
               </footer>
             </ProductContainer>
           </Link>
