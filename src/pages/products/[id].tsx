@@ -1,10 +1,11 @@
-import axios from 'axios'
 import { GetStaticPaths, GetStaticProps } from 'next'
 import Head from 'next/head'
 import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
 import Stripe from 'stripe'
+import { useContextSelector } from 'use-context-selector'
+import { Button } from '../../components/Button'
+import { CartContext } from '../../contexts/Cart'
 import { stripe } from '../../lib/stripe'
 import {
   ImageContainer,
@@ -20,35 +21,44 @@ interface ProductProps {
     imageUrl: string
     formattedPrice: string
     description: string
+    intPrice: number
     priceId: string
   }
 }
 
 export default function Product({ product }: ProductProps) {
-  const [loadingCheckout, setLoadingCheckout] = useState(false)
-
   const { isFallback } = useRouter()
+
+  const { addItem, openCart, hasItem } = useContextSelector(
+    CartContext,
+    (ctx) => {
+      return {
+        addItem: ctx.addItem,
+        openCart: ctx.openCart,
+        hasItem: ctx.hasItem,
+      }
+    },
+  )
 
   if (isFallback) {
     return <p>loading...</p>
   }
 
-  async function handleCheckout() {
-    setLoadingCheckout(true)
-    try {
-      const { data } = await axios.post<{ checkoutUrl: string }>(
-        '/api/checkout',
-        {
-          priceId: product.priceId,
-        },
-      )
+  function handleAddItemToCard() {
+    addItem({
+      amount: product.intPrice,
+      priceId: product.priceId,
+      quantity: 1,
+      details: {
+        name: product.name,
+        imageUrl: product.imageUrl,
+      },
+    })
 
-      window.location.href = data.checkoutUrl
-    } catch (err) {
-      console.log(err)
-      setLoadingCheckout(false)
-    }
+    setTimeout(() => openCart(), 200)
   }
+
+  const itemExistsInCart = hasItem(product.priceId)
 
   return (
     <>
@@ -70,11 +80,12 @@ export default function Product({ product }: ProductProps) {
 
           <p>{product.description}</p>
 
-          <button onClick={() => handleCheckout()} disabled={loadingCheckout}>
-            {loadingCheckout
-              ? 'Redirecionando para o Checkout...'
-              : 'Comprar agora'}
-          </button>
+          <Button
+            onClick={() => handleAddItemToCard()}
+            disabled={itemExistsInCart}
+          >
+            {itemExistsInCart ? 'Já está na sua sacola' : ' Colocar na sacola'}
+          </Button>
         </ProductDetailsContainer>
       </ProductContainer>
     </>
@@ -108,11 +119,12 @@ export const getStaticProps: GetStaticProps<any, { id: string }> = async ({
   return {
     props: {
       product: {
-        id: productId,
+        id: product.id,
         name: product.name,
         imageUrl: product.images[0],
         formattedPrice: formatMoney((price.unit_amount as number) / 100),
         description: product.description,
+        intPrice: price.unit_amount,
         priceId: price.id,
       },
     },

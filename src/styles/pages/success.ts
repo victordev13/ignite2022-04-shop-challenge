@@ -15,10 +15,17 @@ export const SuccessContainer = styled('main', {
   },
 
   p: {
-    fontSize: '$xl',
+    fontSize: '$lg',
     color: '$gray300',
     maxWidth: 640,
     textAlign: 'center',
+    marginTop: '1rem',
+    lineHeight: 1.4,
+  },
+
+  span: {
+    fontSize: '$xl',
+    fontWeight: 'bold',
     marginTop: '2rem',
     lineHeight: 1.4,
   },
@@ -38,19 +45,26 @@ export const SuccessContainer = styled('main', {
 })
 
 export const ImageContainer = styled('div', {
-  width: '100%',
-  maxWidth: 127,
-  height: 145,
+  width: 140,
+  height: 140,
   background: 'linear-gradient(180deg, #1ea483 0%, #7465d4 100%)',
-  borderRadius: 8,
-  padding: '0.25rem',
-  marginTop: '4rem',
+  borderRadius: '50%',
+  padding: '0.5rem',
 
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
 
+  marginLeft: '-3rem',
+  boxShadow: '0px 0px 60px rgba(0, 0, 0, 0.8)',
+
   img: {
     objectFit: 'cover',
   },
+})
+
+export const ItemsContainer = styled('div', {
+  marginTop: '4rem',
+  display: 'flex',
+  marginRight: '-3rem',
 })

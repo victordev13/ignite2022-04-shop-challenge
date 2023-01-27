@@ -29,6 +29,7 @@ export const ProductContainer = styled('div', {
   },
 
   footer: {
+    cursor: 'default',
     position: 'absolute',
 
     bottom: '0.25rem',

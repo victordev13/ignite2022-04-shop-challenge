@@ -14,12 +14,17 @@ import { formatMoney } from '../utils/money'
 import 'keen-slider/keen-slider.min.css'
 import Head from 'next/head'
 import { Handbag } from 'phosphor-react'
+import { useContextSelector } from 'use-context-selector'
+import { CartContext } from '../contexts/Cart'
+import React from 'react'
 
 interface Product {
   id: string
   name: string
   imageUrl: string
   formattedPrice: string
+  intPrice: number
+  priceId: string
 }
 
 interface Props {
@@ -44,6 +49,27 @@ export default function Home({ products }: Props) {
     },
   })
 
+  const { addItem } = useContextSelector(CartContext, (ctx) => {
+    return {
+      addItem: ctx.addItem,
+    }
+  })
+
+  function handleAddToCard(priceId: string) {
+    const product = products.find((p) => p.priceId === priceId)
+    if (!product) return
+
+    addItem({
+      amount: product.intPrice,
+      priceId: product.priceId,
+      quantity: 1,
+      details: {
+        name: product.name,
+        imageUrl: product.imageUrl,
+      },
+    })
+  }
+
   return (
     <>
       <Head>
@@ -51,20 +77,22 @@ export default function Home({ products }: Props) {
       </Head>
       <HomeContainer ref={sliderRef} className="keen-slider">
         {products.map((p) => (
-          <Link href={'/products/' + p.id} key={p.id} prefetch={false}>
+          <React.Fragment key={p.id}>
             <ProductContainer className="keen-slider__slide">
-              <Image src={p.imageUrl} width={520} height={480} alt={p.name} />
+              <Link href={'/products/' + p.id} key={p.id} prefetch={false}>
+                <Image src={p.imageUrl} width={520} height={480} alt={p.name} />
+              </Link>
               <footer>
                 <div>
                   <strong>{p.name}</strong>
                   <span>{p.formattedPrice}</span>
                 </div>
-                <AddToCartButton>
+                <AddToCartButton onClick={() => handleAddToCard(p.priceId)}>
                   <Handbag size={32} color="white" weight="bold" />
                 </AddToCartButton>
               </footer>
             </ProductContainer>
-          </Link>
+          </React.Fragment>
         ))}
       </HomeContainer>
     </>
@@ -85,6 +113,8 @@ export const getStaticProps: GetStaticProps = async () => {
       name: product.name,
       imageUrl: product.images[0],
       formattedPrice: formatMoney((price.unit_amount as number) / 100),
+      intPrice: price.unit_amount,
+      priceId: price.id,
     }
   })
 
