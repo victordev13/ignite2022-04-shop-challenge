@@ -1,4 +1,4 @@
-### Challenge developed at chapter 04 of [Ignite ReactJS](https://www.rocketseat.com.br/ignite) of Rocketseat
+### Challenge developed at chapter 04 of [Ignite ReactJS](https://www.rocketseat.com.br/ignite)
 
  - **Title:** "Adicionando features ao Ignite Shop"
  - **Challenge Description:** "Com base no [victordev13/ignite2022-04-shop](https://github.com/victordev13/ignite2022-04-shop), implementar um carrinho de compras, com a opção de adicionar e remover os itens antes de prosseguir ao checkout."
