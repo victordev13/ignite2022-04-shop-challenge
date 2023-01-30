@@ -1,7 +1,8 @@
 import axios from 'axios'
-import { ReactNode, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { createContext } from 'use-context-selector'
 import Cart from '../components/Cart'
+import { cartApi } from '../services/cartApi'
 import { Item } from '../types/cart'
 
 type ItemToAddToCart = {
@@ -45,24 +46,24 @@ export function CartContextProvider({ children }: CartContextProviderProps) {
       alert('Ops, você já tem um item desse na sua sacola 😁')
       return
     }
-
-    setItems((state) => [
-      ...state,
-      {
-        id: Date.now().toString(),
-        totalAmount: item.amount * item.quantity,
-        quantity: item.quantity,
-        details: {
-          priceId: item.priceId,
-          amount: item.amount,
-          imageUrl: item.details.imageUrl,
-          name: item.details.name,
-        },
+    const cartItem = {
+      id: Date.now().toString(),
+      totalAmount: item.amount * item.quantity,
+      quantity: item.quantity,
+      details: {
+        priceId: item.priceId,
+        amount: item.amount,
+        imageUrl: item.details.imageUrl,
+        name: item.details.name,
       },
-    ])
+    }
+
+    cartApi.addItem(cartItem)
+    setItems((state) => [...state, cartItem])
   }
 
   function removeItem(item: Item): void {
+    cartApi.removeItem(item)
     setItems((state) => state.filter((s) => s.id !== item.id))
   }
 
@@ -94,6 +95,10 @@ export function CartContextProvider({ children }: CartContextProviderProps) {
 
     window.location.href = data.checkoutUrl
   }
+
+  useEffect(() => {
+    setItems(cartApi.getItems())
+  }, [])
 
   const quantity = items.reduce((acc, curr) => acc + curr.quantity, 0)
   const totalAmount = items.reduce((acc, curr) => acc + curr.details.amount, 0)
